@@ -11,6 +11,32 @@ class TestInterface(ut.TestCase):
 		node = np.Node(5)
 		self.assertEqual(node.get_data(),int(unicode(node)))
 
+class TestExceptions(ut.TestCase):
+	def test_parent_accepts_no_data(self):
+		node = np.Node()
+		node.a = 1
+		node.b = 2
+		node.c = 3
+		self.assertRaises(TypeError,node.set_data,5)
+
+	def test_parent_returns_no_data(self):
+		node = np.Node()
+		node.a = 1
+		node.b = 2
+		node.c = 3
+		self.assertRaises(LookupError,node.get_data)
+
+	def test_nodes_with_data_cannot_have_children(self):
+		node = np.Node(5)
+		def callable():
+			node.a = 1
+		self.assertRaises(TypeError,callable)
+
+	def test_nodes_with_data_cannot_have_grandchildren(self):
+		node = np.Node(5)
+		def callable():
+			node.a.b = 1
+		self.assertRaises(TypeError,callable)
 
 class TestIteration(ut.TestCase):
 	def test_node_is_iterable(self):
@@ -40,7 +66,7 @@ class TestIteration(ut.TestCase):
 		self.assertSetEqual(set([node.a,node.b,node.c]),halmaz)
 
 	def test_iterable_does_not_return_self(self):
-		node = np.Node(5)
+		node = np.Node()
 		node.a = 1
 		node.b = 2
 		node.c = 3
@@ -50,7 +76,7 @@ class TestIteration(ut.TestCase):
 		self.assertNotIn(node,halmaz)
 
 	def test_number_of_children(self):
-		node = np.Node(5)
+		node = np.Node()
 		node.a = 1
 		node.b = 2
 		node.c = 3
@@ -66,7 +92,7 @@ class TestIteration(ut.TestCase):
 		self.assertEqual(len(node),0)
 
 	def test_children_as_dictionary(self):
-		node = np.Node(5)
+		node = np.Node()
 		node.a = 1
 		node.b = 2
 		node.c = 3
@@ -101,11 +127,11 @@ class TestTree(ut.TestCase):
 		walk(root) 
 
 	def test_get_tree(self):
-		root = np.Node(0)
+		root = np.Node()
 		root.parent1.child1 = 1
 		root.parent1.child2 = 2
 		root.parent2 = 3
-		self.assertDictEqual(root.get_tree(),{'parent1': {'child1': None, 'child2': None}, 'parent2': None})
+		self.assertDictEqual(root.get_tree(),{'parent1': {'child1': 1, 'child2': 2}, 'parent2': 3})
 		import yaml
 		print yaml.dump(root.get_tree(),default_flow_style=False)
 
