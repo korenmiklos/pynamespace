@@ -38,6 +38,16 @@ class TestExceptions(ut.TestCase):
 			node.a.b = 1
 		self.assertRaises(TypeError,callable)
 
+	def test_cannot_call_node_reserved_word(self):
+		RESERVED_WORDS = ['__init__','__data__',
+							'get_tree','get_data','set_data',
+							'children_as_dictionary']
+		node = np.Node()
+		def callable(word):
+			node.__setattr__(word,1)
+		for word in RESERVED_WORDS:
+			self.assertRaises(NameError,callable,word)
+
 class TestIteration(ut.TestCase):
 	def test_node_is_iterable(self):
 		node = np.Node()

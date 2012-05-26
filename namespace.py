@@ -49,6 +49,10 @@ There is a dictionary representation of the whole tree:
 '''
 
 class Node(object):
+	RESERVED_WORDS = ['__init__','__data__',
+							'get_tree','get_data','set_data',
+							'children_as_dictionary']
+
 	def __init__(self,value=None):
 		'''
 		Store value directly.
@@ -85,6 +89,8 @@ class Node(object):
 		'''
 		if self.__data__ is not None:
 			raise TypeError, 'Nodes with data cannot have children'
+		elif name in self.__class__.RESERVED_WORDS:
+			raise NameError, 'Node cannot be called reserved word'
 		else:
 			node = Node(value)
 			object.__setattr__(self, name, node)
