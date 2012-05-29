@@ -11,7 +11,20 @@ class TestInterface(ut.TestCase):
 		node = np.Node(5)
 		self.assertEqual(node.get_data(),int(unicode(node)))
 
+class TestLinks(ut.TestCase):
+	def test_link_points_to_same(self):
+		node = np.Node()
+		node.a.b = 3
+		node.c.d = node.a.b
+		self.assertEqual(node.a.b,node.c.d)
+
 class TestExceptions(ut.TestCase):
+	def test_cyclical_link(self):
+		node = np.Node()
+		def callable():
+			node.a = node 
+		self.assertRaises(ValueError,callable)
+
 	def test_parent_accepts_no_data(self):
 		node = np.Node()
 		node.a = 1

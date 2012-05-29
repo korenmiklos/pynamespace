@@ -91,7 +91,23 @@ class Node(object):
 			raise TypeError, 'Nodes with data cannot have children'
 		elif name in self.__class__.RESERVED_WORDS:
 			raise NameError, 'Node cannot be called reserved word'
+		elif isinstance(value,Node):
+			# nodes are hard links, not data, they can be assigned directly
+			def walk(parent):
+				children = []
+				if parent:
+					for child in parent:
+						children.extend(walk(child))
+					return children
+				else:
+					return [parent,]
+			if self in walk(value):
+				# current node cannot be a child of the new node - to avoid circular links
+				raise ValueError, 'Circular reference assigning a link'
+			else:
+				object.__setattr__(self,name,value)
 		else:
+			# create a new node with the value as data
 			node = Node(value)
 			object.__setattr__(self, name, node)
 
